@@ -45,6 +45,7 @@ function updateUI(links) {
     list.innerHTML = '';
     
     if (links.length === 0) {
+        emptyState.innerHTML = '<p>비정상 링크가 없습니다.</p>';
         emptyState.classList.remove('hidden');
         stats.classList.add('hidden');
         return;
