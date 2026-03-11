@@ -1,0 +1,19 @@
+.http-link-highlight {
+    outline: 4px solid #f44336 !important;
+    outline-offset: 2px !important;
+    background-color: rgba(244, 67, 54, 0.2) !important;
+    transition: outline 0.3s ease, background-color 0.3s ease;
+    animation: http-pulse 1s infinite alternate;
+    z-index: 9999 !important;
+    position: relative;
+    border-radius: 4px;
+}
+
+@keyframes http-pulse {
+    from {
+        box-shadow: 0 0 5px #f44336;
+    }
+    to {
+        box-shadow: 0 0 20px #f44336;
+    }
+}

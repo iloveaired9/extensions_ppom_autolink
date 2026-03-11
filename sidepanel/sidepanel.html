@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP Link Scanner</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>HTTP Link Scanner</h1>
+      <p class="subtitle">비정상/비보안 링크 실시간 탐지</p>
+    </header>
+
+    <div class="actions">
+      <button id="scan-btn" class="primary-btn">페이지 스캔 시작</button>
+    </div>
+
+    <div id="stats" class="stats-container hidden">
+      <div class="stat-item">
+        <span class="stat-label">발견된 링크:</span>
+        <span id="link-count" class="stat-value">0</span>
+      </div>
+    </div>
+
+    <div id="results-container" class="results-container">
+      <div id="empty-state" class="empty-state">
+        <p>스캔 버튼을 눌러 http:// 링크를 찾아보세요.</p>
+      </div>
+      <ul id="link-list" class="link-list"></ul>
+    </div>
+  </div>
+  <script src="sidepanel.js"></script>
+</body>
+</html>
