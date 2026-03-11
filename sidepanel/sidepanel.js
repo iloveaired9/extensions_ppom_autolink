@@ -4,15 +4,28 @@ document.getElementById('settings-toggle').addEventListener('click', () => {
 });
 
 const autoScanCheckbox = document.getElementById('auto-scan');
+const scanBtn = document.getElementById('scan-btn');
+
+function toggleScanBtn(isAuto) {
+    if (isAuto) {
+        scanBtn.classList.add('hidden');
+    } else {
+        scanBtn.classList.remove('hidden');
+    }
+}
 
 // Load setting
 chrome.storage.local.get(['autoScan'], (result) => {
-    autoScanCheckbox.checked = result.autoScan || false;
+    const isAuto = result.autoScan || false;
+    autoScanCheckbox.checked = isAuto;
+    toggleScanBtn(isAuto);
 });
 
 // Save setting
 autoScanCheckbox.addEventListener('change', () => {
-    chrome.storage.local.set({ autoScan: autoScanCheckbox.checked });
+    const isAuto = autoScanCheckbox.checked;
+    chrome.storage.local.set({ autoScan: isAuto });
+    toggleScanBtn(isAuto);
 });
 
 // Listen for auto-scan results from content script
