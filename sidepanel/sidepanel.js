@@ -28,10 +28,25 @@ autoScanCheckbox.addEventListener('change', () => {
     toggleScanBtn(isAuto);
 });
 
-// Listen for auto-scan results from content script
+// Listen for events
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'auto_scan_results') {
         updateUI(request.links || []);
+    } else if (request.action === 'tab_updated') {
+        // Clear UI on navigation
+        updateUI([]);
+    }
+});
+
+// Refresh UI when switching tabs
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+    updateUI([]); // Clear first
+    const tab = await chrome.tabs.get(activeInfo.tabId);
+    if (tab.url && !tab.url.startsWith('chrome://')) {
+        chrome.tabs.sendMessage(tab.id, { action: 'scan_links' }, (response) => {
+            if (chrome.runtime.lastError) return;
+            if (response) updateUI(response.links || []);
+        });
     }
 });
 

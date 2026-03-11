@@ -6,12 +6,10 @@ chrome.storage.local.get(['autoScan'], (result) => {
         // Wait a bit for the page to finish rendering
         setTimeout(() => {
             scanForHttpLinks();
-            if (foundLinks.length > 0) {
-                chrome.runtime.sendMessage({ 
-                    action: 'auto_scan_results', 
-                    links: foundLinks 
-                }).catch(err => console.log('Side panel not open yet or error:', err));
-            }
+            chrome.runtime.sendMessage({ 
+                action: 'auto_scan_results', 
+                links: foundLinks 
+            }).catch(err => console.log('Side panel not open yet or error:', err));
         }, 1500);
     }
 });
