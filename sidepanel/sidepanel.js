@@ -1,3 +1,27 @@
+document.getElementById('settings-toggle').addEventListener('click', () => {
+    const panel = document.getElementById('settings-panel');
+    panel.classList.toggle('hidden');
+});
+
+const autoScanCheckbox = document.getElementById('auto-scan');
+
+// Load setting
+chrome.storage.local.get(['autoScan'], (result) => {
+    autoScanCheckbox.checked = result.autoScan || false;
+});
+
+// Save setting
+autoScanCheckbox.addEventListener('change', () => {
+    chrome.storage.local.set({ autoScan: autoScanCheckbox.checked });
+});
+
+// Listen for auto-scan results from content script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'auto_scan_results') {
+        updateUI(request.links || []);
+    }
+});
+
 document.getElementById('scan-btn').addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     
@@ -7,7 +31,7 @@ document.getElementById('scan-btn').addEventListener('click', async () => {
                 console.error(chrome.runtime.lastError);
                 return;
             }
-            updateUI(response.links || []);
+            if (response) updateUI(response.links || []);
         });
     }
 });

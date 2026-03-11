@@ -1,5 +1,21 @@
 let foundLinks = [];
 
+// Auto-scan on load if setting is enabled
+chrome.storage.local.get(['autoScan'], (result) => {
+    if (result.autoScan) {
+        // Wait a bit for the page to finish rendering
+        setTimeout(() => {
+            scanForHttpLinks();
+            if (foundLinks.length > 0) {
+                chrome.runtime.sendMessage({ 
+                    action: 'auto_scan_results', 
+                    links: foundLinks 
+                }).catch(err => console.log('Side panel not open yet or error:', err));
+            }
+        }, 1500);
+    }
+});
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'scan_links') {
         scanForHttpLinks();
