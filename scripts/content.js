@@ -43,10 +43,7 @@ function scanForHttpLinks() {
         const isAbnormal = /^http:\/\//.test(trimmedHref) || 
                            (/^http:[^\/]/.test(trimmedHref) && !/^https:/.test(trimmedHref));
 
-        // Exclude trusted internal redirection domain
-        const isTrusted = trimmedHref.includes('s.ppomppu.co.kr');
-
-        if (isAbnormal && !isTrusted) {
+        if (isAbnormal) {
             foundLinks.push({
                 index: logicalIndex++,
                 href: href,
