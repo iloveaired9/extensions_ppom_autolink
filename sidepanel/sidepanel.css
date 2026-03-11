@@ -194,11 +194,31 @@ input:checked + .slider:before {
   flex-grow: 1;
 }
 
-.empty-state {
+.empty-state, .loading-state {
   text-align: center;
   padding: 40px 20px;
   color: var(--text-sub);
   font-style: italic;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 4px solid rgba(0,0,0,0.1);
+  border-left-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .link-list {

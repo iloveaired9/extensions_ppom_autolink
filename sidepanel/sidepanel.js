@@ -33,20 +33,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'auto_scan_results') {
         updateUI(request.links || []);
     } else if (request.action === 'tab_updated') {
-        // Clear UI on navigation
-        updateUI([]);
+        // Clear UI on navigation and show scanning if auto
+        chrome.storage.local.get(['autoScan'], (result) => {
+            if (result.autoScan) {
+                showScanningState();
+            } else {
+                updateUI([]);
+            }
+        });
     }
 });
 
 // Refresh UI when switching tabs
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
-    updateUI([]); // Clear first
+    showScanningState();
     const tab = await chrome.tabs.get(activeInfo.tabId);
     if (tab.url && !tab.url.startsWith('chrome://')) {
         chrome.tabs.sendMessage(tab.id, { action: 'scan_links' }, (response) => {
-            if (chrome.runtime.lastError) return;
+            if (chrome.runtime.lastError) {
+                updateUI([]);
+                return;
+            }
             if (response) updateUI(response.links || []);
         });
+    } else {
+        updateUI([]);
     }
 });
 
@@ -54,9 +65,11 @@ document.getElementById('scan-btn').addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     
     if (tab) {
+        showScanningState();
         chrome.tabs.sendMessage(tab.id, { action: 'scan_links' }, (response) => {
             if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
+                updateUI([]);
                 return;
             }
             if (response) updateUI(response.links || []);
@@ -64,13 +77,27 @@ document.getElementById('scan-btn').addEventListener('click', async () => {
     }
 });
 
+function showScanningState() {
+    const list = document.getElementById('link-list');
+    const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
+    const stats = document.getElementById('stats');
+    
+    list.innerHTML = '';
+    stats.classList.add('hidden');
+    emptyState.classList.add('hidden');
+    loadingState.classList.remove('hidden');
+}
+
 function updateUI(links) {
     const list = document.getElementById('link-list');
     const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
     const stats = document.getElementById('stats');
     const countLabel = document.getElementById('link-count');
     
     list.innerHTML = '';
+    loadingState.classList.add('hidden');
     
     if (links.length === 0) {
         emptyState.innerHTML = '<p>비정상 링크가 없습니다.</p>';
